@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pizza Comparison</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { background: #f3f4f6; text-align: left; }
+      .btn { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+      .btn.secondary { background: #6b7280; }
+      .best { background: #ecfdf5; }
+      .actions { display: flex; gap: 8px; margin: 8px 0; }
+      .hint { color: #6b7280; font-size: 12px; }
+      input[type="text"], input[type="number"] { width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; }
+    </style>
+    <script>
+      function addRow(){
+        const tbody = document.getElementById('rows');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="text" name="name" placeholder="Name" /></td>
+          <td><input type="number" name="diameter" step="0.1" min="0" placeholder="12" /></td>
+          <td><input type="number" name="price" step="0.01" min="0" placeholder="9.99" /></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Pizza Comparison</h1>
+    <p class="hint">Enter pizzas to compare. The lower the $/sq.inch, the better the value.</p>
+
+    <form method="post">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Diameter (inches)</th>
+            <th>Price ($)</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          {% for r in rows %}
+          <tr>
+            <td><input type="text" name="name" value="{{ r.name }}" /></td>
+            <td><input type="number" name="diameter" step="0.1" min="0" value="{{ '%.1f'|format(r.diameter) }}" /></td>
+            <td><input type="number" name="price" step="0.01" min="0" value="{{ '%.2f'|format(r.price) }}" /></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="actions">
+        <button type="button" class="btn secondary" onclick="addRow()">+ Add Row</button>
+        <button type="submit" class="btn">Compare</button>
+      </div>
+    </form>
+
+    {% if result %}
+    <h2>Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Diameter</th>
+          <th>Price</th>
+          <th>$ per sq.inch</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in result %}
+        <tr class="{% if loop.index0 == best_idx %}best{% endif %}">
+          <td>{{ row.name }}</td>
+          <td>{{ '%.1f"'|format(row.diameter) }}</td>
+          <td>{{ '$%.2f'|format(row.price) }}</td>
+          <td>{{ '$%.4f'|format(row.ppsi) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+
+  </body>
+  </html>
+

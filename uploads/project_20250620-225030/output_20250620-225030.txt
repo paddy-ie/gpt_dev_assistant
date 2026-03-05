@@ -1,0 +1,27 @@
+bolt_mvp/
+├── manage.py
+├── bolt_mvp/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── core/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── forms.py
+│   └── templates/
+│       └── core/
+│           ├── base.html
+│           ├── register.html
+│           ├── login.html
+│           ├── booking.html
+│           ├── dashboard.html
+│           └── payment.html
+├── static/
+│   └── css/
+│       └── tailwind.css
+└── requirements.txt

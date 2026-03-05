@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2 class="text-xl font-bold mb-4">Pay for Ride</h2>
+<p>Pickup: {{ ride.pickup_location }}<br>Dropoff: {{ ride.dropoff_location }}</p>
+<form id="payment-form">
+  <button id="pay-btn" class="bg-green-500 text-white px-4 py-2 rounded">Pay $10</button>
+</form>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+const stripe = Stripe('{{ stripe_public_key }}');
+const clientSecret = '{{ client_secret }}';
+document.getElementById('pay-btn').onclick = async function(e) {
+    e.preventDefault();
+    const {error} = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {card: {token: 'tok_visa'}}
+    });
+    if (!error) {
+        window.location = "{% url 'booking' %}";
+    }
+};
+</script>
+{% endblock %}

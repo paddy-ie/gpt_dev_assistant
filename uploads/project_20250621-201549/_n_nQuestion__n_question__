@@ -1,0 +1,50 @@
+result = ask_gpt(
+            "You're a senior developer assistant. Help clearly.", full_prompt
+        )
+
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        project_dir = os.path.join(app.config["UPLOAD_FOLDER"], f"project_{timestamp}")
+        os.makedirs(project_dir, exist_ok=True)
+
+        code_blocks = extract_code_blocks(result)
+        seen_filenames = set()
+
+        for filename, content in code_blocks:
+            filename_clean = safe_filename(filename, f"output_{timestamp}.txt")
+            orig_filename_clean = filename_clean
+            counter = 1
+            while filename_clean in seen_filenames:
+                filename_clean = f"{os.path.splitext(orig_filename_clean)[0]}_{counter}{os.path.splitext(orig_filename_clean)[1]}"
+                counter += 1
+            seen_filenames.add(filename_clean)
+            file_path = os.path.join(project_dir, filename_clean)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(content.strip())
+
+        # Generate helper script
+        script_path = os.path.join(project_dir, "generate_project.py")
+        generate_python_script(code_blocks, script_path)
+
+        # Zip the folder
+        zip_path = shutil.make_archive(project_dir, 'zip', project_dir)
+        output_zip = os.path.basename(zip_path)
+
+    return render_template(
+        "index_tailwind.html",
+        result=result,
+        code=code,
+        question=question,
+        output_file=output_zip,
+    )
+
+@app.route("/download/<filename>")
+def download(filename):
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    if not os.path.exists(file_path):
+        flash("File not found.", "error")
+        return redirect(url_for("index"))
+    return send_file(file_path, as_attachment=True)
+
+if __name__ == "__main__":
+    app.run(debug=True)

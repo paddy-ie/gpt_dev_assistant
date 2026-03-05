@@ -1,0 +1,22 @@
+tradesai/
+├── manage.py
+├── tradesai/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+├── quotes/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   ├── views.py
+│   └── templates/
+│       └── quotes/
+│           └── quote_form.html
+├── requirements.txt
+├── .env

@@ -1,0 +1,3 @@
+django-admin startproject tradesmean
+cd tradesmean
+python manage.py startapp core

@@ -1,0 +1,8 @@
+from django import forms
+
+class QuoteRequestForm(forms.Form):
+    job_description = forms.CharField(
+        label="Job Description",
+        widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Describe the job...'}),
+        max_length=1000,
+    )

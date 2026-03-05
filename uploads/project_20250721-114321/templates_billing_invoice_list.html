@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Invoices</title>
+</head>
+<body>
+    <h2>Your Invoices</h2>
+    <ul>
+        {% for invoice in invoices %}
+            <li>
+                {{ invoice.amount }} due {{ invoice.due_date }} - 
+                {% if invoice.is_paid %}Paid{% else %}Unpaid{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

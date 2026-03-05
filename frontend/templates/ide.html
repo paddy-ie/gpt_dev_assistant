@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lightweight Dev IDE</title>
+    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='ide.css') }}" />
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="brand">Private Repl</div>
+      <div class="projects">
+        <label for="project-select">Project</label>
+        <select id="project-select"></select>
+        <button id="new-project">New</button>
+        <button id="delete-project">Delete</button>
+      </div>
+      <div id="status" class="status">Ready</div>
+    </div>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-actions">
+          <button data-action="new-file">New File</button>
+          <button data-action="new-folder">New Folder</button>
+          <button data-action="rename">Rename</button>
+          <button data-action="delete">Delete</button>
+        </div>
+        <div id="file-tree" class="file-tree"></div>
+      </aside>
+
+      <section class="editor">
+        <header class="editor-header">
+          <span id="current-path">Select a file…</span>
+          <div class="editor-actions">
+            <button id="save-btn">Save</button>
+            <button id="run-btn">Run</button>
+          </div>
+        </header>
+        <textarea id="editor" spellcheck="false"></textarea>
+      </section>
+
+      <section class="output">
+        <div class="pane output-pane">
+          <header class="pane-header">
+            <span>Execution Output</span>
+          </header>
+          <pre id="run-output" class="run-output"></pre>
+        </div>
+        <div class="pane assistant-pane">
+          <header class="pane-header assistant-header">
+            <span>Assistant</span>
+            <label class="include-file">
+              <input type="checkbox" id="assistant-include-file" /> include open file
+            </label>
+          </header>
+          <div id="assistant-log" class="assistant-log"></div>
+          <form id="assistant-form" class="assistant-form">
+            <textarea
+              id="assistant-input"
+              rows="3"
+              placeholder="Ask the assistant..."
+              required
+            ></textarea>
+            <div class="assistant-actions">
+              <button type="submit" id="assistant-submit">Send</button>
+              <button type="button" id="assistant-clear">Clear</button>
+            </div>
+          </form>
+        </div>
+        <div class="pane agent-pane">
+          <header class="pane-header agent-header">
+            <span>Agent 3</span>
+            <span id="agent-status" class="agent-status">Idle</span>
+          </header>
+          <form id="agent-form" class="agent-form">
+            <label class="agent-field">
+              Goal
+              <textarea
+                id="agent-goal"
+                rows="3"
+                placeholder="Describe what you want the agent to build or fix"
+                required
+              ></textarea>
+            </label>
+            <div class="agent-grid">
+              <label class="agent-field">
+                Test Command
+                <input type="text" id="agent-test-command" placeholder="pytest -q" />
+              </label>
+              <label class="agent-field">
+                Reflections
+                <input type="number" id="agent-reflections" min="0" max="5" value="1" />
+              </label>
+              <label class="agent-field">
+                Timeout (min)
+                <input type="number" id="agent-timeout" min="1" max="120" value="10" />
+              </label>
+              <label class="agent-field">
+                Model
+                <input type="text" id="agent-model" placeholder="gpt-4.1-mini" />
+              </label>
+            </div>
+            <div class="agent-actions">
+              <button type="submit" id="agent-start">Start Agent</button>
+              <button type="button" id="agent-stop" disabled>Stop</button>
+            </div>
+          </form>
+          <div id="agent-log" class="agent-log"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('frontend.static', filename='ide.js') }}" defer></script>
+  </body>
+</html>

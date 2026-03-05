@@ -1,0 +1,108 @@
+To write unit tests for the MVP of a mobile-first web app like Bolt, you'll need to focus on testing the key functionalities: user registration and login, booking interface, and possibly the payment processing logic. Below, I'll provide examples of how you might write unit tests for these components using Django's testing framework.
+
+### Setting Up Tests
+
+First, ensure your Django project is configured to run tests. You should have a `tests.py` file in each app where you can define your test cases.
+
+### Example Unit Tests
+
+#### Users App (`users/tests.py`)
+
+```python
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth.models import User
+
+class UserTests(TestCase):
+
+    def test_user_registration(self):
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'password1': 'complexpassword123',
+            'password2': 'complexpassword123',
+        })
+        self.assertEqual(response.status_code, 302)  # Redirect after successful registration
+        self.assertTrue(User.objects.filter(username='testuser').exists())
+
+    def test_user_login(self):
+        user = User.objects.create_user(username='testuser', password='complexpassword123')
+        response = self.client.post(reverse('login'), {
+            'username': 'testuser',
+            'password': 'complexpassword123',
+        })
+        self.assertEqual(response.status_code, 302)  # Redirect after successful login
+        self.assertTrue(response.wsgi_request.user.is_authenticated)
+```
+
+#### Rides App (`rides/tests.py`)
+
+```python
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth.models import User
+from .models import Ride
+
+class RideTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='complexpassword123')
+        self.client.login(username='testuser', password='complexpassword123')
+
+    def test_ride_booking(self):
+        response = self.client.post(reverse('book_ride'), {
+            'pickup_location': 'Location A',
+            'dropoff_location': 'Location B',
+        })
+        self.assertEqual(response.status_code, 302)  # Redirect after successful booking
+        self.assertTrue(Ride.objects.filter(user=self.user, pickup_location='Location A').exists())
+
+    def test_ride_list_view(self):
+        Ride.objects.create(user=self.user, pickup_location='Location A', dropoff_location='Location B', ride_status='pending')
+        response = self.client.get(reverse('ride_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Location A')
+```
+
+#### Payments App (`payments/tests.py`)
+
+For payment processing, you might want to mock the Stripe API calls to avoid real transactions during testing. Here's a simple example using Python's `unittest.mock`:
+
+```python
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth.models import User
+from unittest.mock import patch
+
+class PaymentTests(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='complexpassword123')
+        self.client.login(username='testuser', password='complexpassword123')
+
+    @patch('payments.views.stripe.Charge.create')
+    def test_process_payment(self, mock_stripe_charge_create):
+        mock_stripe_charge_create.return_value = {'id': 'ch_1Hh1Y2Lz4J3g3X'}
+        response = self.client.post(reverse('process_payment', args=[1]), {
+            'stripeToken': 'tok_visa',
+            'amount': 1000,
+        })
+        self.assertEqual(response.status_code, 200)
+        mock_stripe_charge_create.assert_called_once()
+```
+
+### Running Tests
+
+To run your tests, use the following command in your terminal:
+
+```bash
+python manage.py test
+```
+
+This will execute all the test cases defined in your `tests.py` files across your Django apps.
+
+### Notes
+
+- Ensure that your URLs in `reverse()` match those defined in your `urls.py`.
+- Use Django's test client to simulate HTTP requests and test the views.
+- Mock external services like Stripe to avoid actual API calls during testing.
+- Adjust the test cases to fit your actual implementation details, such as form fields and view logic.

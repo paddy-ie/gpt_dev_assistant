@@ -1,0 +1,2 @@
+<label for="question" class="font-medium">...</label>
+     <input id="question" ...>

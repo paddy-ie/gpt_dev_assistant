@@ -1,0 +1,4 @@
+from werkzeug.utils import secure_filename
+    ...
+    filename = secure_filename(uploaded_file.filename)
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)

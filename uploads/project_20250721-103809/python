@@ -1,0 +1,7 @@
+# In core/views.py
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def dashboard(request):
+    # Your dashboard logic
+    pass

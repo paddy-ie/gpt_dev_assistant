@@ -1,0 +1,6 @@
+from django.urls import path
+from .views import quote_request_view
+
+urlpatterns = [
+    path('', quote_request_view, name='quote_request'),
+]

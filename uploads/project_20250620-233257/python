@@ -1,0 +1,28 @@
+from django.core.management.base import BaseCommand
+from customers.models import Customer
+from django.utils import timezone
+from twilio.rest import Client
+
+TWILIO_ACCOUNT_SID = 'your_account_sid'
+TWILIO_AUTH_TOKEN = 'your_auth_token'
+TWILIO_FROM_NUMBER = 'your_twilio_number'
+
+class Command(BaseCommand):
+    help = 'Send reactivation SMS to inactive customers'
+
+    def handle(self, *args, **kwargs):
+        today = timezone.now().date()
+        inactive_customers = Customer.objects.filter(
+            last_active__lt=today.replace(year=today.year-1),  # Inactive > 1 year
+            reactivated=False
+        )
+        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
+        for customer in inactive_customers:
+            message = f"Hi {customer.name}, we miss you! Come back and enjoy our services."
+            client.messages.create(
+                body=message,
+                from_=TWILIO_FROM_NUMBER,
+                to=customer.phone_number
+            )
+            self.stdout.write(self.style.SUCCESS(f"Sent SMS to {customer.name}"))

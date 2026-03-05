@@ -1,0 +1,6 @@
+# views.py
+def upload_audio(request):
+    if request.method == 'POST':
+        audio_file = request.FILES['audio']
+        # send to speech-to-text API, get transcript
+        # save transcript to DB
