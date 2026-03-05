@@ -1,1 +1,0 @@
-{{ form.csrf_token }}

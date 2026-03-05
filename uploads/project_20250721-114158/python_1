@@ -1,8 +1,0 @@
-from django.core.mail import send_mail
-
-send_mail(
-    'Your Quote from Tradesmean',
-    'Here is your quote: ...',
-    'from@example.com',
-    [client.email],
-)

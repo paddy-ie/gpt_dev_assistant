@@ -1,9 +1,0 @@
-from django.db import models
-
-class QuoteRequest(models.Model):
-    job_description = models.TextField()
-    generated_quote = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Quote on {self.created_at:%Y-%m-%d} - {self.job_description[:30]}"
